@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>北极航道科技监测系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tech: {
+              dark: 'rgba(30, 41, 59, 0.9)', // 深色半透明背景
+              blue: '#00E0FF',               // 亮科技蓝
+              light: '#64FFDA',              // 浅科技蓝
+            }
+          },
+          fontFamily: {
+            tech: ['Orbitron', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-glow {
+        text-shadow: 0 0 6px rgba(0, 224, 255, 0.8);
+      }
+      .bg-polar {
+        background-size: cover;
+        background-position: center;
+        opacity: 0.2;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      .card-tech {
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 15px rgba(0, 224, 255, 0.4);
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen font-tech">
+  <!-- 极地背景（需替换为您的图片URL） -->
+  <div class="bg-polar" style="background-image: url('https://i.imgur.com/您的图片实际URL.jpg');"></div>
+
+  <!-- 内容容器 -->
+  <div class="relative z-10 container mx-auto px-4 py-8 flex justify-center">
+    <div class="w-full max-w-md bg-tech-dark rounded-xl card-tech p-6">
+      <!-- 标题 -->
+      <div class="border-b border-tech-blue/30 pb-3 mb-4">
+        <h1 class="text-2xl font-bold text-tech-blue text-glow flex items-center justify-center">
+          <i class="fa fa-globe mr-2"></i>北极航道科技监测系统
+        </h1>
+        <p class="text-sm text-tech-light/70 text-center mt-1">实时航点信息动态展示</p>
+      </div>
+
+      <!-- 航点信息区域 -->
+      <div id="waypoint-info" class="space-y-4 text-sm">
+        <!-- 信息将动态插入 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 航点数据（含所有地点及时间间隔）
+    const waypoints = [
+      {
+        name: "起点（太仓港）",
+        lng: "121.1°E",
+        lon: "31.6°N",
+        time: "00:00.00",
+        speed: "12节",
+        environment: "晴，东海海域"
+      },
+      {
+        name: "津轻海峡",
+        lng: "140.2°E",
+        lon: "41.5°N",
+        time: "00:12.70",
+        speed: "12节",
+        environment: "国际航道，无冰"
+      },
+      {
+        name: "白令海峡",
+        lng: "168.9°W",
+        lon: "65.7°N",
+        time: "00:45.83",
+        speed: "10节",
+        environment: "零星浮冰，进入北极圈"
+      },
+      {
+        name: "楚科奇海",
+        lng: "169.0°W",
+        lon: "69.5°N",
+        time: "00:56.02",
+        speed: "8节",
+        environment: "浮冰密度3-4成"
+      },
+      {
+        name: "东西伯利亚海",
+        lng: "150.1°E",
+        lon: "76.8°N",
+        time: "01:05.00",
+        speed: "7节",
+        environment: "冰脊密集，需绕行"
+      },
+      {
+        name: "维利基斯基海峡",
+        lng: "103.6°E",
+        lon: "77.9°N",
+        time: "01:08.00",
+        speed: "6节",
+        environment: "连接拉普捷夫海与喀拉海"
+      },
+      {
+        name: "喀拉海",
+        lng: "90.3°E",
+        lon: "76.5°N",
+        time: "01:12.00",
+        speed: "9节",
+        environment: "浮冰密度3-4成"
+      },
+      {
+        name: "巴伦支海",
+        lng: "50.2°E",
+        lon: "72.5°N",
+        time: "01:18.00",
+        speed: "11节",
+        environment: "海面开阔，稀疏浮冰"
+      },
+      {
+        name: "挪威北角",
+        lng: "25.7°E",
+        lon: "71.2°N",
+        time: "01:25.00",
+        speed: "12节",
+        environment: "抵达终点，巴伦支海"
+      }
+    ];
+
+    // 显示间隔（毫秒，按您提供的时间换算）
+    const intervals = [
+      12700,   // 起点 → 津轻海峡（12.7s）
+      33130,   // 津轻海峡 → 白令海峡（45.83-12.7=33.13s）
+      10190,   // 白令海峡 → 楚科奇海（56.02-45.83=10.19s）
+      8980,    // 楚科奇海 → 东西伯利亚海（65-56.02=8.98s）
+      3000,    // 东西伯利亚海 → 维利基斯基海峡（68-65=3s）
+      4000,    // 维利基斯基海峡 → 喀拉海（72-68=4s）
+      6000,    // 喀拉海 → 巴伦支海（78-72=6s）
+      7000,    // 巴伦支海 → 挪威北角（85-78=7s）
+      5000     // 挪威北角 → 循环间隔
+    ];
+
+    let currentIndex = 0;
+
+    // 渲染航点信息
+    function renderWaypoint(index) {
+      const point = waypoints[index];
+      const container = document.getElementById('waypoint-info');
+      container.style.opacity = "0";
+      
+      setTimeout(() => {
+        container.innerHTML = `
+          <div class="border-b border-tech-blue/20 pb-2">
+            <h2 class="text-lg font-bold text-tech-blue text-glow">${point.name}</h2>
+            <p class="text-xs text-tech-light/70">时间标记：${point.time}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <p class="text-tech-light/80">经度 lng:</p>
+              <p class="font-semibold text-tech-blue">${point.lng}</p>
+            </div>
+            <div>
+              <p class="text-tech-light/80">纬度 lon:</p>
+              <p class="font-semibold text-tech-blue">${point.lon}</p>
+            </div>
+            <div>
+              <p class="text-tech-light/80">航速:</p>
+              <p class="font-semibold text-tech-blue">${point.speed}</p>
+            </div>
+            <div>
+              <p class="text-tech-light/80">环境:</p>
+              <p class="font-semibold text-tech-blue">${point.environment}</p>
+            </div>
+          </div>
+        `;
+        container.style.opacity = "1";
+        container.style.transition = "opacity 0.5s ease";
+      }, 300);
+    }
+
+    // 切换逻辑
+    function switchWaypoint() {
+      renderWaypoint(currentIndex);
+      const nextIndex = (currentIndex + 1) % waypoints.length;
+      setTimeout(switchWaypoint, intervals[currentIndex]);
+      currentIndex = nextIndex;
+    }
+
+    // 初始化
+    window.onload = () => {
+      switchWaypoint();
+    };
+  </script>
+</body>
+</html>

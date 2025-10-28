@@ -40,7 +40,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="m-0 p-0 min-h-screen font-tech">
-  <!-- 背景图片（直接在这里替换为您的图片路径） -->
+  <!-- 背景图片 -->
   <div class="fixed inset-0 -z-10 bg-weak">
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
@@ -50,25 +50,25 @@
     <div class="bg-tech-dark rounded-xl p-5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]">
       <!-- 标题 -->
       <div class="text-center mb-4 pb-2 border-b border-tech-blue/30">
-        <h1 class="text-xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
-        <p class="text-xs text-tech-light/70 mt-1">2024年航行轨迹数据</p>
+        <h1 class="text-2xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
+        <p class="text-sm text-tech-light/70 mt-1">2024年航行轨迹数据</p>
       </div>
 
       <!-- 航点信息区 -->
-      <div id="waypoint-info" class="space-y-3 text-sm">
+      <div id="waypoint-info" class="space-y-3 text-base">
         <!-- 动态内容将插入这里 -->
       </div>
     </div>
   </div>
 
   <script>
-    // 航点数据（时间改为2024年具体日期，按您提供的间隔推算）
+    // 航点数据
     const waypoints = [
       {
         name: "起点（太仓港）",
         lng: "121.1°E",
         lon: "31.6°N",
-        time: "2024-08-15 08:00:00", // 起始时间
+        time: "2024-08-15 08:00:00",
         speed: "12节",
         environment: "晴，东海海域"
       },
@@ -76,7 +76,7 @@
         name: "津轻海峡",
         lng: "140.2°E",
         lon: "41.5°N",
-        time: "2024-08-15 08:00:13", // 起点+12.7秒
+        time: "2024-08-15 08:00:13",
         speed: "12节",
         environment: "国际航道，无冰"
       },
@@ -84,7 +84,7 @@
         name: "白令海峡",
         lng: "168.9°W",
         lon: "65.7°N",
-        time: "2024-08-15 08:00:46", // 起点+45.83秒
+        time: "2024-08-15 08:00:46",
         speed: "10节",
         environment: "零星浮冰，进入北极圈"
       },
@@ -92,7 +92,7 @@
         name: "楚科奇海",
         lng: "169.0°W",
         lon: "69.5°N",
-        time: "2024-08-15 08:00:56", // 起点+56.02秒
+        time: "2024-08-15 08:00:56",
         speed: "8节",
         environment: "浮冰密度3-4成"
       },
@@ -100,7 +100,7 @@
         name: "东西伯利亚海",
         lng: "150.1°E",
         lon: "76.8°N",
-        time: "2024-08-15 08:01:05", // 起点+1分05秒
+        time: "2024-08-15 08:01:05",
         speed: "7节",
         environment: "冰脊密集，需绕行"
       },
@@ -108,7 +108,7 @@
         name: "维利基斯基海峡",
         lng: "103.6°E",
         lon: "77.9°N",
-        time: "2024-08-15 08:01:08", // 起点+1分08秒
+        time: "2024-08-15 08:01:08",
         speed: "6节",
         environment: "连接拉普捷夫海与喀拉海"
       },
@@ -116,7 +116,7 @@
         name: "喀拉海",
         lng: "90.3°E",
         lon: "76.5°N",
-        time: "2024-08-15 08:01:12", // 起点+1分12秒
+        time: "2024-08-15 08:01:12",
         speed: "9节",
         environment: "浮冰密度3-4成"
       },
@@ -124,7 +124,7 @@
         name: "巴伦支海",
         lng: "50.2°E",
         lon: "72.5°N",
-        time: "2024-08-15 08:01:18", // 起点+1分18秒
+        time: "2024-08-15 08:01:18",
         speed: "11节",
         environment: "海面开阔，稀疏浮冰"
       },
@@ -132,28 +132,28 @@
         name: "挪威北角",
         lng: "25.7°E",
         lon: "71.2°N",
-        time: "2024-08-15 08:01:25", // 起点+1分25秒
+        time: "2024-08-15 08:01:25",
         speed: "12节",
         environment: "抵达终点，巴伦支海"
       }
     ];
 
-    // 显示间隔（毫秒，按您提供的时间差）
+    // 显示间隔（毫秒）
     const intervals = [
-      12700,   // 起点 → 津轻海峡（12.7s）
-      33130,   // 津轻海峡 → 白令海峡（33.13s）
-      10190,   // 白令海峡 → 楚科奇海（10.19s）
-      8980,    // 楚科奇海 → 东西伯利亚海（8.98s）
-      3000,    // 东西伯利亚海 → 维利基斯基海峡（3s）
-      4000,    // 维利基斯基海峡 → 喀拉海（4s）
-      6000,    // 喀拉海 → 巴伦支海（6s）
-      7000,    // 巴伦支海 → 挪威北角（7s）
+      12700,   // 起点 → 津轻海峡
+      33130,   // 津轻海峡 → 白令海峡
+      10190,   // 白令海峡 → 楚科奇海
+      8980,    // 楚科奇海 → 东西伯利亚海
+      3000,    // 东西伯利亚海 → 维利基斯基海峡
+      4000,    // 维利基斯基海峡 → 喀拉海
+      6000,    // 喀拉海 → 巴伦支海
+      7000,    // 巴伦支海 → 挪威北角
       5000     // 挪威北角 → 循环间隔
     ];
 
     let currentIndex = 0;
 
-    // 渲染航点信息（确保文字清晰）
+    // 渲染航点信息
     function renderWaypoint(index) {
       const point = waypoints[index];
       const container = document.getElementById('waypoint-info');
@@ -162,29 +162,29 @@
       setTimeout(() => {
         container.innerHTML = `
           <div class="border-b border-tech-blue/20 pb-2 mb-1">
-            <h2 class="text-base font-bold text-tech-blue text-glow">${point.name}</h2>
+            <h2 class="text-lg font-bold text-tech-blue text-glow">${point.name}</h2>
           </div>
           
           <div class="grid grid-cols-2 gap-x-3 gap-y-2">
-            <div class="flex justify-between">
-              <span class="text-tech-light/80">经度 lng:</span>
-              <span class="font-semibold text-tech-blue">${point.lng}</span>
+            <div class="flex">
+              <span class="text-tech-light/80 w-20">经度 lng:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.lng}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-tech-light/80">纬度 lon:</span>
-              <span class="font-semibold text-tech-blue">${point.lon}</span>
+            <div class="flex">
+              <span class="text-tech-light/80 w-20">纬度 lon:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.lon}</span>
             </div>
-            <div class="flex justify-between col-span-2">
-              <span class="text-tech-light/80">时间:</span>
-              <span class="font-semibold text-tech-blue">${point.time}</span>
+            <div class="flex col-span-2">
+              <span class="text-tech-light/80 w-20">时间:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.time}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-tech-light/80">航速:</span>
-              <span class="font-semibold text-tech-blue">${point.speed}</span>
+            <div class="flex">
+              <span class="text-tech-light/80 w-20">航速:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.speed}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-tech-light/80">环境:</span>
-              <span class="font-semibold text-tech-blue">${point.environment}</span>
+            <div class="flex">
+              <span class="text-tech-light/80 w-20">环境:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.environment}</span>
             </div>
           </div>
         `;

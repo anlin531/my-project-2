@@ -48,10 +48,13 @@
   <!-- 主卡片 -->
   <div class="w-full max-w-md mx-auto p-4 pt-8">
     <div class="bg-tech-dark rounded-xl p-5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]">
-      <!-- 标题 -->
-      <div class="text-center mb-4 pb-2 border-b border-tech-blue/30">
+      <!-- 标题及按钮 -->
+      <div class="flex flex-col items-center mb-4 pb-2 border-b border-tech-blue/30">
         <h1 class="text-2xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
         <p class="text-sm text-tech-light/70 mt-1">2024年航行轨迹数据</p>
+        <button id="resetBtn" class="mt-3 bg-tech-blue text-tech-dark font-semibold py-1 px-3 rounded text-sm hover:bg-tech-light transition-colors">
+          <i class="fa fa-refresh mr-1"></i>一键重新显示
+        </button>
       </div>
 
       <!-- 航点信息区 -->
@@ -63,7 +66,7 @@
 
   <script>
     // 航点数据
-   const waypoints = [
+    const waypoints = [
       {
         name: "太仓港",
         lng: "121.1°E",
@@ -71,7 +74,6 @@
         time: "2024-08-15 08:00",
         speed: "11节",
         environment: "东海，晴，东南风3级",
-   
       },
       {
         name: "津轻海峡",
@@ -80,7 +82,6 @@
         time: "2024-08-16 20:00",
         speed: "9节",
         environment: "北太平洋西风带，蒲氏5级风",
- 
       },
       {
         name: "白令海峡",
@@ -89,7 +90,6 @@
         time: "2024-08-23 02:00",
         speed: "7节",
         environment: "北极圈，浮冰密集度3/10，碎冰为主，厚度0.4-0.6米",
-       
       },
       {
         name: "楚科奇海",
@@ -98,7 +98,6 @@
         time: "2024-08-24 10:00",
         speed: "5节",
         environment: "东西伯利亚海，冰密集度6/10，含0.8-1.0米冰脊",
-       
       },
       {
         name: "东西伯利亚海",
@@ -107,7 +106,6 @@
         time: "2024-08-27 04:00",
         speed: "5节",
         environment: "东西伯利亚海，冰密集度6/10，含0.8-1.0米冰脊",
-       
       },
       {
         name: "维利基斯基海峡",
@@ -116,7 +114,6 @@
         time: "2024-08-29 16:00",
         speed: "5节",
         environment: "维利基斯基海峡，狭窄水道，冰密集度4/10",
-      
       },
       {
         name: "喀拉海",
@@ -125,7 +122,6 @@
         time: "2024-09-01 07:00",
         speed: "8节",
         environment: "喀拉海，冰密集度2/10，薄冰<0.3米",
-      
       },
       {
         name: "巴伦支海",
@@ -134,7 +130,6 @@
         time: "2024-09-03 02:00",
         speed: "10节",
         environment: "巴伦支海，无冰，受北大西洋暖流影响，水温8℃",
-       
       },
       {
         name: "挪威北角",
@@ -143,10 +138,8 @@
         time: "2024-09-06 09:00",
         speed: "11节",
         environment: "西南风4级，无冰",
-       
       }
     ];
-
 
     // 显示间隔（毫秒）
     const intervals = [
@@ -162,6 +155,7 @@
     ];
 
     let currentIndex = 0;
+    let timer = null;
 
     // 渲染航点信息
     function renderWaypoint(index) {
@@ -207,16 +201,22 @@
     function switchWaypoint() {
       renderWaypoint(currentIndex);
       const nextIndex = (currentIndex + 1) % waypoints.length;
-      setTimeout(switchWaypoint, intervals[currentIndex]);
+      timer = setTimeout(switchWaypoint, intervals[currentIndex]);
       currentIndex = nextIndex;
+    }
+
+    // 重置逻辑
+    function resetDisplay() {
+      clearTimeout(timer);
+      currentIndex = 0;
+      switchWaypoint();
     }
 
     // 初始化
     window.onload = () => {
       switchWaypoint();
+      document.getElementById('resetBtn').addEventListener('click', resetDisplay);
     };
   </script>
 </body>
 </html>
-
-

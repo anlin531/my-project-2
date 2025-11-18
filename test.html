@@ -46,12 +46,12 @@
   </div>
 
   <!-- 主卡片 -->
-  <div class="w-full max-w-md mx-auto p-4 pt-8">
-    <div class="bg-tech-dark rounded-xl p-5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+  <div class="w-full max-w-sm mx-auto p-4 pt-8"> <!-- 调整为max-w-sm -->
+    <div class="bg-tech-dark rounded-xl p-3 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]"> <!-- 内边距改为p-3 -->
       <!-- 标题及按钮 -->
-      <div class="flex flex-col items-center mb-4 pb-2 border-b border-tech-blue/30">
-        <h1 class="text-2xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
-        <p class="text-sm text-tech-light/70 mt-1">2024年航行轨迹数据</p>
+      <div class="flex flex-col items-center mb-3 pb-2 border-b border-tech-blue/30"> <!-- 间距调整 -->
+        <h1 class="text-xl font-bold text-tech-blue text-glow">北极航道实时监测</h1> <!-- 字号改为text-xl -->
+        <p class="text-xs text-tech-light/70 mt-1">2024年航行轨迹数据</p> <!-- 字号改为text-xs -->
         <!-- 缩小的"重置"按钮 -->
         <button id="resetBtn" class="mt-2 bg-tech-blue text-tech-dark font-semibold py-0.5 px-2 rounded text-xs hover:bg-tech-light transition-colors">
           <i class="fa fa-refresh mr-0.5"></i>重置
@@ -59,7 +59,7 @@
       </div>
 
       <!-- 航点信息区 -->
-      <div id="waypoint-info" class="space-y-3 text-base">
+      <div id="waypoint-info" class="space-y-2 text-sm"> <!-- 字号改为text-sm，间距调整 -->
         <!-- 动态内容将插入这里 -->
       </div>
     </div>
@@ -166,29 +166,29 @@
       
       setTimeout(() => {
         container.innerHTML = `
-          <div class="border-b border-tech-blue/20 pb-2 mb-1">
-            <h2 class="text-lg font-bold text-tech-blue text-glow">${point.name}</h2>
+          <div class="border-b border-tech-blue/20 pb-1 mb-1"> <!-- 间距调整 -->
+            <h2 class="text-base font-bold text-tech-blue text-glow">${point.name}</h2> <!-- 字号改为text-base -->
           </div>
           
-          <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+          <div class="grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs"> <!-- 间距和字号调整 -->
             <div class="flex">
-              <span class="text-tech-light/80 w-20">经度 lng:</span>
+              <span class="text-tech-light/80 w-16">经度 lng:</span>
               <span class="font-semibold text-tech-blue text-left">${point.lng}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">纬度 lon:</span>
+              <span class="text-tech-light/80 w-16">纬度 lon:</span>
               <span class="font-semibold text-tech-blue text-left">${point.lon}</span>
             </div>
             <div class="flex col-span-2">
-              <span class="text-tech-light/80 w-20">时间:</span>
+              <span class="text-tech-light/80 w-16">时间:</span>
               <span class="font-semibold text-tech-blue text-left">${point.time}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">航速:</span>
+              <span class="text-tech-light/80 w-16">航速:</span>
               <span class="font-semibold text-tech-blue text-left">${point.speed}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">环境:</span>
+              <span class="text-tech-light/80 w-16">环境:</span>
               <span class="font-semibold text-tech-blue text-left">${point.environment}</span>
             </div>
           </div>
@@ -221,11 +221,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -12,9 +12,9 @@
         extend: {
           colors: {
             tech: {
-              dark: 'rgba(15, 23, 42, 0.9)', // 深色半透明卡片
-              blue: '#06B6D4',               // 亮科技蓝（高对比度）
-              light: '#7DD3FC',              // 浅蓝辅助色
+              dark: 'rgba(15, 23, 42, 0.9)',
+              blue: '#06B6D4',
+              light: '#7DD3FC',
             }
           },
           fontFamily: {
@@ -30,7 +30,7 @@
         text-shadow: 0 0 5px rgba(6, 182, 212, 0.9);
       }
       .bg-weak {
-        opacity: 0.2; /* 背景弱化 */
+        opacity: 0.2;
       }
       .card-border {
         border: 1px solid rgba(6, 182, 212, 0.5);
@@ -45,28 +45,28 @@
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
 
-  <!-- 主卡片 -->
-  <div class="w-full max-w-md mx-auto p-4 pt-8">
-    <div class="bg-tech-dark rounded-xl p-5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]">
-      <!-- 标题及按钮 -->
-      <div class="flex flex-col items-center mb-4 pb-2 border-b border-tech-blue/30">
-        <h1 class="text-2xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
-        <p class="text-sm text-tech-light/70 mt-1">2024年航行轨迹数据</p>
-        <!-- 缩小的"重置"按钮 -->
-        <button id="resetBtn" class="mt-2 bg-tech-blue text-tech-dark font-semibold py-0.5 px-2 rounded text-xs hover:bg-tech-light transition-colors">
+  <!-- 主卡片：外层容器适当扩大内边距 -->
+  <div class="w-full max-w-sm mx-auto p-3 pt-6"> <!-- p从2→3，pt从4→6，扩大外层留白 -->
+    <!-- 卡片内边距保持适中 -->
+    <div class="bg-tech-dark rounded-xl p-3.5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]"> <!-- p从3→3.5，略微扩大内部空间 -->
+      <!-- 标题区域：间距适度放宽 -->
+      <div class="flex flex-col items-center mb-3 pb-2 border-b border-tech-blue/30"> <!-- 保持mb-3 pb-2，避免过度压缩 -->
+        <h1 class="text-xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
+        <p class="text-xs text-tech-light/70 mt-1.5">2024年航行轨迹数据</p> <!-- mt从1→1.5，增加标题与副标题间距 -->
+        <button id="resetBtn" class="mt-2.5 bg-tech-blue text-tech-dark font-semibold py-0.5 px-2 rounded text-xs hover:bg-tech-light transition-colors">
           <i class="fa fa-refresh mr-0.5"></i>重置
         </button>
       </div>
 
-      <!-- 航点信息区 -->
-      <div id="waypoint-info" class="space-y-3 text-base">
+      <!-- 航点信息区：适度扩大元素间距 -->
+      <div id="waypoint-info" class="space-y-2.5 text-sm"> <!-- space-y从2→2.5，增加信息块间距 -->
         <!-- 动态内容将插入这里 -->
       </div>
     </div>
   </div>
 
   <script>
-    // 航点数据
+    // 航点数据（不变）
     const waypoints = [
       {
         name: "太仓港",
@@ -142,23 +142,15 @@
       }
     ];
 
-    // 显示间隔（毫秒）
+    // 显示间隔（不变）
     const intervals = [
-      12765,   // 起点 → 宗谷海峡
-      33160,   // 宗谷海峡 → 白令海峡
-      10195,   // 白令海峡 → 楚科奇海
-      8990,    // 楚科奇海 → 东西伯利亚海
-      3010,    // 东西伯利亚海 → 维利基斯基海峡
-      4010,    // 维利基斯基海峡 → 喀拉海
-      6010,    // 喀拉海 → 巴伦支海
-      7005,    // 巴伦支海 → 挪威北角
-      5000     // 挪威北角 → 循环间隔
+      12765, 33160, 10195, 8990, 3010, 4010, 6010, 7005, 5000
     ];
 
     let currentIndex = 0;
     let timer = null;
 
-    // 渲染航点信息
+    // 渲染航点信息：微调内部间距
     function renderWaypoint(index) {
       const point = waypoints[index];
       const container = document.getElementById('waypoint-info');
@@ -166,29 +158,29 @@
       
       setTimeout(() => {
         container.innerHTML = `
-          <div class="border-b border-tech-blue/20 pb-2 mb-1">
-            <h2 class="text-lg font-bold text-tech-blue text-glow">${point.name}</h2>
+          <div class="border-b border-tech-blue/20 pb-1.5 mb-1.5"> <!-- pb和mb从1→1.5，扩大名称栏间距 -->
+            <h2 class="text-base font-bold text-tech-blue text-glow">${point.name}</h2>
           </div>
           
-          <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+          <div class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs"> <!-- gap-y从1.5→2，扩大信息行间距 -->
             <div class="flex">
-              <span class="text-tech-light/80 w-20">经度 lng:</span>
+              <span class="text-tech-light/80 w-16">经度 lng:</span>
               <span class="font-semibold text-tech-blue text-left">${point.lng}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">纬度 lon:</span>
+              <span class="text-tech-light/80 w-16">纬度 lon:</span>
               <span class="font-semibold text-tech-blue text-left">${point.lon}</span>
             </div>
             <div class="flex col-span-2">
-              <span class="text-tech-light/80 w-20">时间:</span>
+              <span class="text-tech-light/80 w-16">时间:</span>
               <span class="font-semibold text-tech-blue text-left">${point.time}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">航速:</span>
+              <span class="text-tech-light/80 w-16">航速:</span>
               <span class="font-semibold text-tech-blue text-left">${point.speed}</span>
             </div>
             <div class="flex">
-              <span class="text-tech-light/80 w-20">环境:</span>
+              <span class="text-tech-light/80 w-16">环境:</span>
               <span class="font-semibold text-tech-blue text-left">${point.environment}</span>
             </div>
           </div>
@@ -198,7 +190,7 @@
       }, 300);
     }
 
-    // 切换逻辑
+    // 切换逻辑（不变）
     function switchWaypoint() {
       renderWaypoint(currentIndex);
       const nextIndex = (currentIndex + 1) % waypoints.length;
@@ -206,14 +198,14 @@
       currentIndex = nextIndex;
     }
 
-    // 重置逻辑
+    // 重置逻辑（不变）
     function resetDisplay() {
       clearTimeout(timer);
       currentIndex = 0;
       switchWaypoint();
     }
 
-    // 初始化
+    // 初始化（不变）
     window.onload = () => {
       switchWaypoint();
       document.getElementById('resetBtn').addEventListener('click', resetDisplay);

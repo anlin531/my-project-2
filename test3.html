@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>北极航道科技监测系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tech: {
+              dark: 'rgba(15, 23, 42, 0.9)',
+              blue: '#06B6D4',
+              light: '#7DD3FC',
+            }
+          },
+          fontFamily: {
+            tech: ['Rajdhani', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-glow {
+        text-shadow: 0 0 5px rgba(6, 182, 212, 0.9);
+      }
+      .bg-weak {
+        opacity: 0.2;
+      }
+      .card-border {
+        border: 1px solid rgba(6, 182, 212, 0.5);
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="m-0 p-0 min-h-screen font-tech">
+  <!-- 背景图片 -->
+  <div class="fixed inset-0 -z-10 bg-weak">
+    <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
+  </div>
+
+  <!-- 主卡片：外层容器适当扩大内边距 -->
+  <div class="w-full max-w-sm mx-auto p-3 pt-6"> <!-- p从2→3，pt从4→6，扩大外层留白 -->
+    <!-- 卡片内边距保持适中 -->
+    <div class="bg-tech-dark rounded-xl p-3.5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]"> <!-- p从3→3.5，略微扩大内部空间 -->
+      <!-- 标题区域：间距适度放宽 -->
+      <div class="flex flex-col items-center mb-3 pb-2 border-b border-tech-blue/30"> <!-- 保持mb-3 pb-2，避免过度压缩 -->
+        <h1 class="text-xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
+        <p class="text-xs text-tech-light/70 mt-1.5">2024年航行轨迹数据</p> <!-- mt从1→1.5，增加标题与副标题间距 -->
+        <button id="resetBtn" class="mt-2.5 bg-tech-blue text-tech-dark font-semibold py-0.5 px-2 rounded text-xs hover:bg-tech-light transition-colors">
+          <i class="fa fa-refresh mr-0.5"></i>重置
+        </button>
+      </div>
+
+      <!-- 航点信息区：适度扩大元素间距 -->
+      <div id="waypoint-info" class="space-y-2.5 text-sm"> <!-- space-y从2→2.5，增加信息块间距 -->
+        <!-- 动态内容将插入这里 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 航点数据（不变）
+    const waypoints = [
+      {
+        name: "太仓港",
+        lng: "121.1°E",
+        lon: "31.6°N",
+        time: "2024-08-15 08:00",
+        speed: "11节",
+        environment: "东海，晴，东南风3级",
+      },
+      {
+        name: "宗谷海峡",
+        lng: "142.2°E",
+        lon: "45.5°N",
+        time: "2024-08-16 20:00",
+        speed: "9节",
+        environment: "北太平洋西风带，蒲氏5级风",
+      },
+      {
+        name: "白令海峡",
+        lng: "168.9°W",
+        lon: "65.7°N",
+        time: "2024-08-23 02:00",
+        speed: "7节",
+        environment: "北极圈，浮冰密集度3/10，碎冰为主，厚度0.4-0.6米",
+      },
+      {
+        name: "楚科奇海",
+        lng: "169.0°W",
+        lon: "69.5°N",
+        time: "2024-08-24 10:00",
+        speed: "5节",
+        environment: "东西伯利亚海，冰密集度6/10，含0.8-1.0米冰脊",
+      },
+      {
+        name: "东西伯利亚海",
+        lng: "150.1°E",
+        lon: "76.8°N",
+        time: "2024-08-27 04:00",
+        speed: "5节",
+        environment: "东西伯利亚海，冰密集度6/10，含0.8-1.0米冰脊",
+      },
+      {
+        name: "维利基斯基海峡",
+        lng: "103.6°E",
+        lon: "77.9°N",
+        time: "2024-08-29 16:00",
+        speed: "5节",
+        environment: "维利基斯基海峡，狭窄水道，冰密集度4/10",
+      },
+      {
+        name: "喀拉海",
+        lng: "90.3°E",
+        lon: "76.5°N",
+        time: "2024-09-01 07:00",
+        speed: "8节",
+        environment: "喀拉海，冰密集度2/10，薄冰<0.3米",
+      },
+      {
+        name: "巴伦支海",
+        lng: "50.2°E",
+        lon: "72.5°N",
+        time: "2024-09-03 02:00",
+        speed: "10节",
+        environment: "巴伦支海，无冰，受北大西洋暖流影响，水温8℃",
+      },
+      {
+        name: "挪威北角",
+        lng: "25.7°E",
+        lon: "71.2°N",
+        time: "2024-09-06 09:00",
+        speed: "11节",
+        environment: "西南风4级，无冰",
+      }
+    ];
+
+    // 显示间隔（不变）
+    const intervals = [
+      19800, 32400, 10195, 9050, 3050, 4050, 6050, 7045, 5050
+    ];
+
+    let currentIndex = 0;
+    let timer = null;
+
+    // 渲染航点信息：微调内部间距
+    function renderWaypoint(index) {
+      const point = waypoints[index];
+      const container = document.getElementById('waypoint-info');
+      container.style.opacity = "0";
+      
+      setTimeout(() => {
+        container.innerHTML = `
+          <div class="border-b border-tech-blue/20 pb-1.5 mb-1.5"> <!-- pb和mb从1→1.5，扩大名称栏间距 -->
+            <h2 class="text-base font-bold text-tech-blue text-glow">${point.name}</h2>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs"> <!-- gap-y从1.5→2，扩大信息行间距 -->
+            <div class="flex">
+              <span class="text-tech-light/80 w-16">经度 lng:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.lng}</span>
+            </div>
+            <div class="flex">
+              <span class="text-tech-light/80 w-16">纬度 lon:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.lon}</span>
+            </div>
+            <div class="flex col-span-2">
+              <span class="text-tech-light/80 w-16">时间:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.time}</span>
+            </div>
+            <div class="flex">
+              <span class="text-tech-light/80 w-16">航速:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.speed}</span>
+            </div>
+            <div class="flex">
+              <span class="text-tech-light/80 w-16">环境:</span>
+              <span class="font-semibold text-tech-blue text-left">${point.environment}</span>
+            </div>
+          </div>
+        `;
+        container.style.opacity = "1";
+        container.style.transition = "opacity 0.5s ease";
+      }, 300);
+    }
+
+    // 切换逻辑（不变）
+    function switchWaypoint() {
+      renderWaypoint(currentIndex);
+      const nextIndex = (currentIndex + 1) % waypoints.length;
+      timer = setTimeout(switchWaypoint, intervals[currentIndex]);
+      currentIndex = nextIndex;
+    }
+
+    // 重置逻辑（不变）
+    function resetDisplay() {
+      clearTimeout(timer);
+      currentIndex = 0;
+      switchWaypoint();
+    }
+
+    // 初始化（不变）
+    window.onload = () => {
+      switchWaypoint();
+      document.getElementById('resetBtn').addEventListener('click', resetDisplay);
+    };
+  </script>
+</body>
+</html>

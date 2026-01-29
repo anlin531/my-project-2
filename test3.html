@@ -15,7 +15,7 @@
               dark: 'rgba(15, 23, 42, 0.9)',
               blue: '#06B6D4',
               light: '#7DD3FC',
-              alert: '#F87171', // 新增一个警示色用于冰区
+              alert: '#F87171',
             }
           },
           fontFamily: {
@@ -62,14 +62,14 @@
   </div>
 
   <script>
-    // --- 核心修改：数据已更新为“30天/8600海里/4节低速”逻辑 ---
+    // 航点数据 (保持不变)
     const waypoints = [
       {
         name: "太仓港 (启航)",
         lng: "121.1°E",
         lon: "31.6°N",
         time: "2024-08-15 08:00",
-        speed: "15节", // 初始速度加快
+        speed: "15节",
         environment: "东海海域，晴，海况良好，全速推进",
         isRisk: false
       },
@@ -77,7 +77,7 @@
         name: "宗谷海峡",
         lng: "142.2°E",
         lon: "45.5°N",
-        time: "2024-08-18 14:00", // 时间推移
+        time: "2024-08-18 14:00",
         speed: "14节",
         environment: "北太平洋西风带，偶有5级侧风，能见度优",
         isRisk: false
@@ -86,8 +86,8 @@
         name: "白令海峡 (入冰)",
         lng: "168.9°W",
         lon: "65.7°N",
-        time: "2024-08-26 06:00", // 约10天到达白令
-        speed: "9节", // 开始减速
+        time: "2024-08-26 06:00",
+        speed: "9节",
         environment: "进入北极圈，浮冰密集度3/10，启动冰情监测",
         isRisk: false
       },
@@ -101,13 +101,13 @@
         isRisk: false
       },
       {
-        name: "东西伯利亚海 (最难点)", // 对应大屏的“最低航速”区域
+        name: "东西伯利亚海 (最难点)",
         lng: "150.1°E",
         lon: "76.8°N",
         time: "2024-09-02 04:00",
-        speed: "4节", // 【关键】修改为4节，对应大屏最低航速
+        speed: "4节",
         environment: "警告：遭遇1.2米厚冰脊！密集度8/10，低速破冰",
-        isRisk: true // 标记为风险区域，后续会有红色高亮
+        isRisk: true
       },
       {
         name: "维利基斯基海峡",
@@ -123,7 +123,7 @@
         lng: "90.3°E",
         lon: "76.5°N",
         time: "2024-09-10 07:00",
-        speed: "10节", // 速度回升
+        speed: "10节",
         environment: "冰况缓解，薄冰<0.3米，逐步提速",
         isRisk: false
       },
@@ -132,7 +132,7 @@
         lng: "50.2°E",
         lon: "72.5°N",
         time: "2024-09-12 15:00",
-        speed: "14节", // 恢复高速
+        speed: "14节",
         environment: "受暖流影响无冰，水温8℃，全速航行",
         isRisk: false
       },
@@ -140,24 +140,24 @@
         name: "挪威北角 (抵达)",
         lng: "25.7°E",
         lon: "71.2°N",
-        time: "2024-09-14 08:00", // 刚好30天
+        time: "2024-09-14 08:00",
         speed: "12节",
         environment: "抵达终点，西南风4级，航行结束",
         isRisk: false
       }
     ];
 
-    // 调整了展示间隔，让观众有时间看“重冰区”的描述
+    // --- 核心修改：精确匹配秒表记录的时间间隔 ---
     const intervals = [
-      4000, // 太仓 - 快
-      4000, // 宗谷 - 快
-      6000, // 白令 - 稍慢
-      6000, // 楚科奇
-      8000, // 东西伯利亚海 - 【重点】慢一点，让你有时间讲“4节低速”
-      6000, // 维利基斯基
-      5000, // 喀拉海
-      5000, // 巴伦支海
-      99999 // 终点停住
+      20750, // 太仓港(0s) -> 宗谷海峡(20.75s)
+      47660, // 宗谷 -> 白令(1m08.41s)
+      14530, // 白令 -> 楚科奇(1m22.94s)
+      13530, // 楚科奇 -> 东西伯利亚(1m36.47s)
+      5250,  // 东西伯利亚 -> 维利基斯基(1m41.72s)
+      6950,  // 维利基斯基 -> 喀拉海(1m48.67s)
+      8080,  // 喀拉海 -> 巴伦支海(1m56.75s)
+      10980, // 巴伦支海 -> 挪威北角(2m07.73s)
+      99999  // 终点
     ];
 
     let currentIndex = 0;
@@ -167,7 +167,6 @@
       const point = waypoints[index];
       const container = document.getElementById('waypoint-info');
       
-      // 根据是否是风险区域（isRisk）改变部分文字颜色
       const speedColor = point.isRisk ? 'text-tech-alert' : 'text-tech-blue';
       const envColor = point.isRisk ? 'text-tech-alert' : 'text-tech-blue';
 
@@ -212,12 +211,11 @@
 
     function switchWaypoint() {
       renderWaypoint(currentIndex);
-      const nextIndex = (currentIndex + 1) % waypoints.length;
       
-      // 如果到了最后一个点，停止循环，否则继续
+      // 如果不是最后一个点，继续计时
       if (currentIndex < waypoints.length - 1) {
         timer = setTimeout(() => {
-            currentIndex = nextIndex;
+            currentIndex++;
             switchWaypoint();
         }, intervals[currentIndex]);
       }
@@ -230,6 +228,7 @@
     }
 
     window.onload = () => {
+      // 页面加载后自动开始，请确保视频也是同时开始播放
       switchWaypoint();
       document.getElementById('resetBtn').addEventListener('click', resetDisplay);
     };

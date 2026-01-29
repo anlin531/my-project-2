@@ -12,10 +12,11 @@
         extend: {
           colors: {
             tech: {
-              dark: 'rgba(15, 23, 42, 0.9)',
+              dark: 'rgba(15, 23, 42, 0.95)',
               blue: '#06B6D4',
               light: '#7DD3FC',
-              alert: '#F87171',
+              alert: '#EF4444', // 更鲜艳的红色
+              warn: '#F59E0B',  // 增加一个警告色（黄色）
             }
           },
           fontFamily: {
@@ -28,135 +29,188 @@
   <style type="text/tailwindcss">
     @layer utilities {
       .text-glow {
-        text-shadow: 0 0 5px rgba(6, 182, 212, 0.9);
+        text-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
+      }
+      .text-glow-alert {
+        text-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
       }
       .bg-weak {
         opacity: 0.2;
       }
       .card-border {
-        border: 1px solid rgba(6, 182, 212, 0.5);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.15) inset;
       }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="m-0 p-0 min-h-screen font-tech">
+<body class="m-0 p-0 min-h-screen font-tech overflow-hidden">
   <div class="fixed inset-0 -z-10 bg-weak">
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
 
-  <div class="w-full max-w-sm mx-auto p-3 pt-6"> 
-    <div class="bg-tech-dark rounded-xl p-3.5 card-border shadow-[0_0_12px_rgba(6,182,212,0.4)]"> 
+  <div class="w-full max-w-sm mx-auto p-3 pt-6 relative"> 
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-tech-blue/20 to-transparent -z-10"></div>
+
+    <div class="bg-tech-dark rounded-xl p-4 card-border backdrop-blur-sm"> 
       
-      <div class="flex flex-col items-center mb-3 pb-2 border-b border-tech-blue/30"> 
-        <h1 class="text-xl font-bold text-tech-blue text-glow">北极航道实时监测</h1>
-        <p class="text-xs text-tech-light/70 mt-1.5">2024年航行轨迹数据（全程30天）</p> 
-        <button id="resetBtn" class="mt-2.5 bg-tech-blue text-tech-dark font-semibold py-0.5 px-2 rounded text-xs hover:bg-tech-light transition-colors">
-          <i class="fa fa-refresh mr-0.5"></i>重置演示
+      <div class="flex flex-col items-center mb-4 pb-2 border-b border-tech-blue/30 relative"> 
+        <div class="absolute -left-1 top-1 w-1 h-4 bg-tech-blue"></div>
+        <div class="absolute -right-1 top-1 w-1 h-4 bg-tech-blue"></div>
+        
+        <h1 class="text-xl font-bold text-tech-blue text-glow tracking-wider">北极航道实时监测</h1>
+        <div class="flex items-center gap-2 mt-1.5">
+           <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+           <p class="text-xs text-tech-light/70">LIVE DATA STREAM</p>
+        </div>
+        
+        <button id="resetBtn" class="mt-3 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-semibold py-1 px-3 rounded text-xs hover:bg-tech-blue hover:text-tech-dark transition-all duration-300">
+          <i class="fa fa-refresh mr-1"></i>REPLAY
         </button>
       </div>
 
-      <div id="waypoint-info" class="space-y-2.5 text-sm min-h-[180px]"> 
+      <div id="waypoint-info" class="space-y-3 text-sm min-h-[200px]"> 
         </div>
     </div>
   </div>
 
   <script>
-    // 航点数据 (保持不变)
+    // 航点数据：增加了中间海域，丰富了环境描述
     const waypoints = [
       {
         name: "太仓港 (启航)",
         lng: "121.1°E",
         lon: "31.6°N",
         time: "2024-08-15 08:00",
-        speed: "15节",
-        environment: "东海海域，晴，海况良好，全速推进",
-        isRisk: false
+        speed: "15.0节",
+        // 增加长江口特有的浑浊度和繁忙描述
+        environment: "长江口水域，能见度5km，航道繁忙。水流平缓，东北风3级。",
+        type: "normal"
+      },
+      {
+        // 【新增】太仓与宗谷之间
+        name: "日本海 (航行中)",
+        lng: "131.5°E",
+        lon: "37.2°N",
+        time: "En Route...", // 不显示具体到达时间
+        speed: "15.5节",
+        // 增加对马暖流和浪高描述
+        environment: "受对马暖流影响，水温24℃。浪高1.5米，涌浪较小，适合全速航行。",
+        type: "transit" 
       },
       {
         name: "宗谷海峡",
         lng: "142.2°E",
         lon: "45.5°N",
         time: "2024-08-18 14:00",
-        speed: "14节",
-        environment: "北太平洋西风带，偶有5级侧风，能见度优",
-        isRisk: false
+        speed: "14.2节",
+        // 增加海峡特有的雾气描述
+        environment: "海峡狭窄，伴有局地海雾。洋流流速快，注意避让。",
+        type: "normal"
+      },
+      {
+        // 【新增】宗谷与白令之间（西北太平洋）
+        name: "西北太平洋 (深海)",
+        lng: "156.0°E",
+        lon: "52.0°N",
+        time: "En Route...",
+        speed: "14.8节",
+        // 增加深海长涌和气旋描述
+        environment: "千岛寒流交汇区，长涌浪，浪高3-4米。受气旋边缘影响，阵风7级。",
+        type: "transit"
       },
       {
         name: "白令海峡 (入冰)",
         lng: "168.9°W",
         lon: "65.7°N",
         time: "2024-08-26 06:00",
-        speed: "9节",
-        environment: "进入北极圈，浮冰密集度3/10，启动冰情监测",
-        isRisk: false
+        speed: "9.0节",
+        // 增加浮冰初现的描述
+        environment: "进入北极圈，水温骤降至2℃。海面出现散落浮冰（密集度3/10），开始减速。",
+        type: "normal"
       },
       {
         name: "楚科奇海",
         lng: "169.0°W",
         lon: "69.5°N",
         time: "2024-08-28 12:00",
-        speed: "7节",
-        environment: "冰况加重，密集度5/10，伴有碎冰带",
-        isRisk: false
+        speed: "7.5节",
+        // 增加碎冰带描述
+        environment: "浮冰密集度增至5/10。多为一年冰，厚度30-50cm，伴有随洋流漂移的碎冰带。",
+        type: "normal"
       },
       {
-        name: "东西伯利亚海 (最难点)",
+        name: "东西伯利亚海 (重冰区)",
         lng: "150.1°E",
         lon: "76.8°N",
         time: "2024-09-02 04:00",
-        speed: "4节",
-        environment: "警告：遭遇1.2米厚冰脊！密集度8/10，低速破冰",
-        isRisk: true
+        speed: "4.0节",
+        // 增加冰脊和内部压力的专业描述
+        environment: "警告：遭遇1.2米冰脊！冰层内部压力大，密集度8/10。需频繁调整航向避让。",
+        type: "danger" // 对应红色
       },
       {
         name: "维利基斯基海峡",
         lng: "103.6°E",
         lon: "77.9°N",
         time: "2024-09-07 10:00",
-        speed: "6节",
-        environment: "狭窄水道，冰密集度4/10，谨慎通过",
-        isRisk: false
+        speed: "6.0节",
+        // 增加“瓶颈”地理特征描述
+        environment: "北极航道地理瓶颈。水道狭窄，两岸常有固定冰延伸，需沿中心线谨慎驾驶。",
+        type: "warn" // 对应黄色
       },
       {
         name: "喀拉海",
         lng: "90.3°E",
         lon: "76.5°N",
         time: "2024-09-10 07:00",
-        speed: "10节",
-        environment: "冰况缓解，薄冰<0.3米，逐步提速",
-        isRisk: false
+        speed: "10.5节",
+        // 增加“冰窖”解冻的描述
+        environment: "驶离重冰区。海况转好，主要为薄冰（<30cm），水面开阔，逐渐提速。",
+        type: "normal"
       },
       {
-        name: "巴伦支海 (无冰)",
+        name: "巴伦支海",
         lng: "50.2°E",
         lon: "72.5°N",
         time: "2024-09-12 15:00",
-        speed: "14节",
-        environment: "受暖流影响无冰，水温8℃，全速航行",
-        isRisk: false
+        speed: "14.5节",
+        // 增加北大西洋暖流的描述
+        environment: "受北大西洋暖流影响，水温8℃，海面无冰。海况粗糙，有大西洋涌浪。",
+        type: "normal"
       },
       {
         name: "挪威北角 (抵达)",
         lng: "25.7°E",
         lon: "71.2°N",
         time: "2024-09-14 08:00",
-        speed: "12节",
-        environment: "抵达终点，西南风4级，航行结束",
-        isRisk: false
+        speed: "12.0节",
+        environment: "顺利抵达终点。巴伦支海西风4级，视野开阔，任务圆满完成。",
+        type: "success"
       }
     ];
 
-    // --- 核心修改：精确匹配秒表记录的时间间隔 ---
+    // --- 时间间隔计算逻辑 (毫秒) ---
+    // 目标锚点：
+    // 0s (太仓)
+    // 20.75s (宗谷) -> 中间差 20.75s -> 分给 "太仓" 和 "日本海"
+    // 68.41s (白令) -> 中间差 47.66s -> 分给 "宗谷" 和 "西北太平洋"
+    // ...后续保持原间隔
+
     const intervals = [
-      20750, // 太仓港(0s) -> 宗谷海峡(20.75s)
-      47660, // 宗谷 -> 白令(1m08.41s)
-      14530, // 白令 -> 楚科奇(1m22.94s)
-      13530, // 楚科奇 -> 东西伯利亚(1m36.47s)
-      5250,  // 东西伯利亚 -> 维利基斯基(1m41.72s)
-      6950,  // 维利基斯基 -> 喀拉海(1m48.67s)
-      8080,  // 喀拉海 -> 巴伦支海(1m56.75s)
-      10980, // 巴伦支海 -> 挪威北角(2m07.73s)
+      10000, // 太仓展示 10s
+      10750, // 日本海展示 10.75s (总计20.75s 到达宗谷)
+      
+      23000, // 宗谷展示 23s
+      24660, // 西北太平洋展示 24.66s (总计47.66s -> 累加到达 68.41s 白令)
+      
+      14530, // 白令 -> 楚科奇 (1m22.94s)
+      13530, // 楚科奇 -> 东西伯利亚 (1m36.47s)
+      5250,  // 东西伯利亚 -> 维利基斯基 (1m41.72s)
+      6950,  // 维利基斯基 -> 喀拉海 (1m48.67s)
+      8080,  // 喀拉海 -> 巴伦支海 (1m56.75s)
+      10980, // 巴伦支海 -> 挪威北角 (2m07.73s)
       99999  // 终点
     ];
 
@@ -167,52 +221,77 @@
       const point = waypoints[index];
       const container = document.getElementById('waypoint-info');
       
-      const speedColor = point.isRisk ? 'text-tech-alert' : 'text-tech-blue';
-      const envColor = point.isRisk ? 'text-tech-alert' : 'text-tech-blue';
+      // 样式逻辑
+      let titleColor = 'text-tech-blue';
+      let valueColor = 'text-tech-light';
+      let envBorder = 'border-tech-blue/20 bg-tech-blue/5';
+
+      if (point.type === 'danger') {
+        titleColor = 'text-red-500 text-glow-alert';
+        valueColor = 'text-red-400';
+        envBorder = 'border-red-500/30 bg-red-500/10 animate-pulse';
+      } else if (point.type === 'warn') {
+        titleColor = 'text-yellow-500';
+        valueColor = 'text-yellow-400';
+        envBorder = 'border-yellow-500/30 bg-yellow-500/10';
+      } else if (point.type === 'transit') {
+        titleColor = 'text-tech-light/80 italic'; // 过渡海域用斜体
+        envBorder = 'border-tech-blue/10 bg-transparent';
+      } else if (point.type === 'success') {
+        titleColor = 'text-green-400';
+        envBorder = 'border-green-400/30 bg-green-400/10';
+      }
 
       container.style.opacity = "0";
+      container.style.transform = "translateY(5px)";
       
       setTimeout(() => {
         container.innerHTML = `
-          <div class="border-b border-tech-blue/20 pb-1.5 mb-1.5"> 
-            <h2 class="text-base font-bold text-tech-blue text-glow flex justify-between">
+          <div class="border-b border-tech-blue/20 pb-2 mb-2 flex justify-between items-end"> 
+            <h2 class="text-lg font-bold ${titleColor} uppercase tracking-wide">
               ${point.name}
-              <span class="text-xs font-normal text-tech-light/60 self-center">Step ${index + 1}/${waypoints.length}</span>
             </h2>
+            <span class="text-xs font-mono text-tech-light/40 mb-1">DATA FRAME: 0${index + 1}</span>
           </div>
           
-          <div class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs"> 
-            <div class="flex">
-              <span class="text-tech-light/80 w-16">经度 lng:</span>
-              <span class="font-semibold text-tech-blue text-left">${point.lng}</span>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-3 text-xs font-mono"> 
+            <div class="flex flex-col">
+              <span class="text-tech-light/50 scale-90 origin-left">LONGITUDE</span>
+              <span class="font-semibold text-tech-blue text-sm">${point.lng}</span>
             </div>
-            <div class="flex">
-              <span class="text-tech-light/80 w-16">纬度 lon:</span>
-              <span class="font-semibold text-tech-blue text-left">${point.lon}</span>
+            <div class="flex flex-col">
+              <span class="text-tech-light/50 scale-90 origin-left">LATITUDE</span>
+              <span class="font-semibold text-tech-blue text-sm">${point.lon}</span>
             </div>
-            <div class="flex col-span-2">
-              <span class="text-tech-light/80 w-16">时间:</span>
-              <span class="font-semibold text-tech-light text-left">${point.time}</span>
+            
+            <div class="flex flex-col col-span-2 bg-black/20 p-1.5 rounded">
+               <div class="flex justify-between items-center">
+                  <span class="text-tech-light/50">TIME_UTC+8</span>
+                  <span class="font-bold ${valueColor}">${point.time}</span>
+               </div>
+               <div class="flex justify-between items-center mt-1">
+                  <span class="text-tech-light/50">SPEED</span>
+                  <span class="font-bold ${valueColor}">${point.speed}</span>
+               </div>
             </div>
-            <div class="flex">
-              <span class="text-tech-light/80 w-16">航速:</span>
-              <span class="font-semibold ${speedColor} text-left text-glow">${point.speed}</span>
-            </div>
-            <div class="flex col-span-2 bg-tech-blue/10 p-1.5 rounded border border-tech-blue/20">
-              <span class="text-tech-light/80 w-12 shrink-0">环境:</span>
-              <span class="font-semibold ${envColor} text-left leading-tight">${point.environment}</span>
+
+            <div class="col-span-2 ${envBorder} p-2 rounded border transition-colors duration-500">
+              <span class="block text-tech-light/50 mb-1 scale-90 origin-left uppercase">Environment Analysis</span>
+              <span class="${valueColor} leading-relaxed block text-justify">
+                ${point.environment}
+              </span>
             </div>
           </div>
         `;
         container.style.opacity = "1";
-        container.style.transition = "opacity 0.5s ease";
-      }, 300);
+        container.style.transform = "translateY(0)";
+        container.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+      }, 200);
     }
 
     function switchWaypoint() {
       renderWaypoint(currentIndex);
       
-      // 如果不是最后一个点，继续计时
       if (currentIndex < waypoints.length - 1) {
         timer = setTimeout(() => {
             currentIndex++;
@@ -228,7 +307,6 @@
     }
 
     window.onload = () => {
-      // 页面加载后自动开始，请确保视频也是同时开始播放
       switchWaypoint();
       document.getElementById('resetBtn').addEventListener('click', resetDisplay);
     };

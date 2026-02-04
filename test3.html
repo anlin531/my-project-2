@@ -15,14 +15,14 @@
               dark: 'rgba(15, 23, 42, 0.96)',
               blue: '#22D3EE', 
               light: '#E0F2FE', 
-              white: '#F0F9FF', // 新增一个超亮的白色用于正文
+              white: '#FFFFFF', // 纯白
               alert: '#FF4D4D', 
               warn: '#FBBF24',
             }
           },
           fontFamily: {
             tech: ['Rajdhani', 'sans-serif'],
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'], // 增加等宽字体用于数字
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
           },
         },
       }
@@ -30,11 +30,9 @@
   </script>
   <style type="text/tailwindcss">
     @layer utilities {
-      /* 标题发光保留，但更收敛 */
       .text-glow {
         text-shadow: 0 0 5px rgba(34, 211, 238, 0.8);
       }
-      /* 只有数字用微弱发光，增加立体感 */
       .num-glow {
         text-shadow: 0 0 2px rgba(34, 211, 238, 0.5);
       }
@@ -45,7 +43,6 @@
         border: 1px solid rgba(34, 211, 238, 0.4);
         box-shadow: 0 0 15px rgba(34, 211, 238, 0.15) inset;
       }
-      /* 强制抗锯齿，让文字更细更清晰 */
       .sharp-text {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -201,12 +198,12 @@
       const container = document.getElementById('waypoint-info');
       
       let titleColor = 'text-tech-blue';
-      let valueColor = 'text-tech-white'; // 改为最亮的白色
-      let envBorder = 'border-tech-blue/30 bg-black/20'; // 背景调深一点，突出文字
+      let valueColor = 'text-tech-white'; 
+      let envBorder = 'border-tech-blue/30 bg-black/20'; 
 
       if (point.type === 'danger') {
         titleColor = 'text-red-500 text-glow-alert';
-        valueColor = 'text-red-100'; // 红色背景下用浅红白字
+        valueColor = 'text-red-100'; 
         envBorder = 'border-red-500/50 bg-red-900/20';
       } else if (point.type === 'warn') {
         titleColor = 'text-yellow-400';
@@ -254,8 +251,8 @@
             </div>
 
             <div class="col-span-2 ${envBorder} p-2 rounded border transition-colors duration-500 shadow-inner">
-              <span class="block text-tech-light/50 mb-1 text-[10px] font-bold uppercase tracking-wider">Environment Analysis</span>
-              <span class="${valueColor} text-xs font-medium leading-relaxed block text-justify tracking-wide opacity-100">
+              <span class="block text-tech-light/50 mb-1 text-xs font-bold uppercase tracking-wider">Environment Analysis</span>
+              <span class="${valueColor} text-sm font-medium leading-snug block text-justify tracking-wide opacity-100">
                 ${point.environment}
               </span>
             </div>

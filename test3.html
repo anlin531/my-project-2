@@ -12,9 +12,9 @@
         extend: {
           colors: {
             tech: {
-              dark: 'rgba(15, 23, 42, 0.96)', // 背景稍微再深一点，提升文字对比度
-              blue: '#22D3EE', // 稍微提亮一点蓝色
-              light: '#E0F2FE', // 几乎接近白色的浅蓝，提升清晰度
+              dark: 'rgba(15, 23, 42, 0.96)',
+              blue: '#22D3EE', 
+              light: '#E0F2FE', 
               alert: '#FF4D4D', 
               warn: '#FBBF24',
             }
@@ -28,19 +28,18 @@
   </script>
   <style type="text/tailwindcss">
     @layer utilities {
-      /* 优化发光效果，减少扩散，增加锐度 */
       .text-glow {
-        text-shadow: 0 0 10px rgba(34, 211, 238, 0.6), 0 0 2px rgba(34, 211, 238, 0.8);
+        text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
       }
       .text-glow-alert {
-        text-shadow: 0 0 10px rgba(255, 77, 77, 0.6), 0 0 2px rgba(255, 77, 77, 0.8);
+        text-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
       }
       .bg-weak {
         opacity: 0.2;
       }
       .card-border {
         border: 1px solid rgba(34, 211, 238, 0.4);
-        box-shadow: 0 0 20px rgba(34, 211, 238, 0.1) inset;
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.1) inset;
       }
     }
   </style>
@@ -51,29 +50,29 @@
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
 
-  <div class="fixed top-4 left-1/2 -translate-x-1/2 w-full max-w-[450px] z-50 p-2"> 
+  <div class="fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-[400px] z-50 p-2"> 
     
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-tech-blue/20 to-transparent -z-10"></div>
 
-    <div class="bg-tech-dark rounded-xl p-4 card-border backdrop-blur-md shadow-2xl"> 
+    <div class="bg-tech-dark rounded-xl p-3 card-border backdrop-blur-md shadow-2xl"> 
       
-      <div class="flex flex-col items-center mb-3 pb-2 border-b border-tech-blue/30 relative"> 
-        <div class="absolute -left-1 top-1 w-1.5 h-4 bg-tech-blue"></div>
-        <div class="absolute -right-1 top-1 w-1.5 h-4 bg-tech-blue"></div>
+      <div class="flex flex-col items-center mb-2 pb-1.5 border-b border-tech-blue/30 relative"> 
+        <div class="absolute -left-1 top-1 w-1 h-3 bg-tech-blue"></div>
+        <div class="absolute -right-1 top-1 w-1 h-3 bg-tech-blue"></div>
         
-        <h1 class="text-2xl font-bold text-tech-blue text-glow tracking-widest">北极航道实时监测</h1>
+        <h1 class="text-xl font-bold text-tech-blue text-glow tracking-widest">北极航道实时监测</h1>
         
-        <div class="flex items-center gap-2 mt-1.5">
-           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_#4ade80]"></span>
-           <p class="text-xs font-semibold text-tech-light/90 tracking-wider">LIVE DATA STREAM</p>
+        <div class="flex items-center gap-2 mt-1">
+           <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_6px_#4ade80]"></span>
+           <p class="text-[10px] font-bold text-tech-light/90 tracking-wider">LIVE DATA STREAM</p>
         </div>
         
-        <button id="resetBtn" class="mt-2 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-bold py-1 px-3 rounded text-xs hover:bg-tech-blue hover:text-tech-dark transition-all duration-300">
+        <button id="resetBtn" class="mt-1.5 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-bold py-0.5 px-2 rounded text-[10px] hover:bg-tech-blue hover:text-tech-dark transition-all duration-300">
           <i class="fa fa-refresh mr-1"></i>REPLAY
         </button>
       </div>
 
-      <div id="waypoint-info" class="space-y-2 text-sm min-h-[220px]"> 
+      <div id="waypoint-info" class="space-y-2 text-sm min-h-[200px]"> 
         </div>
     </div>
   </div>
@@ -217,37 +216,37 @@
       
       setTimeout(() => {
         container.innerHTML = `
-          <div class="border-b border-tech-blue/30 pb-2 mb-3 flex justify-between items-end"> 
-            <h2 class="text-xl font-bold ${titleColor} uppercase tracking-wide drop-shadow-md">
+          <div class="border-b border-tech-blue/30 pb-1.5 mb-2 flex justify-between items-end"> 
+            <h2 class="text-lg font-bold ${titleColor} uppercase tracking-wide drop-shadow-md">
               ${point.name}
             </h2>
-            <span class="text-sm font-semibold text-tech-light/60 mb-0.5 tracking-wider">FRAME: 0${index + 1}</span>
+            <span class="text-xs font-semibold text-tech-light/60 mb-0.5 tracking-wider">FRAME: 0${index + 1}</span>
           </div>
           
-          <div class="grid grid-cols-2 gap-x-4 gap-y-3 font-mono"> 
+          <div class="grid grid-cols-2 gap-x-3 gap-y-2 font-mono"> 
             <div class="flex flex-col">
-              <span class="text-tech-light/70 text-xs font-semibold mb-0.5">LONGITUDE</span>
-              <span class="font-bold text-tech-blue text-lg tracking-wide">${point.lng}</span>
+              <span class="text-tech-light/70 text-[10px] font-semibold mb-0.5">LONGITUDE</span>
+              <span class="font-bold text-tech-blue text-base tracking-wide">${point.lng}</span>
             </div>
             <div class="flex flex-col">
-              <span class="text-tech-light/70 text-xs font-semibold mb-0.5">LATITUDE</span>
-              <span class="font-bold text-tech-blue text-lg tracking-wide">${point.lon}</span>
+              <span class="text-tech-light/70 text-[10px] font-semibold mb-0.5">LATITUDE</span>
+              <span class="font-bold text-tech-blue text-base tracking-wide">${point.lon}</span>
             </div>
             
-            <div class="flex flex-col col-span-2 bg-black/30 p-2.5 rounded border border-white/5">
+            <div class="flex flex-col col-span-2 bg-black/30 p-2 rounded border border-white/5">
                <div class="flex justify-between items-center border-b border-white/10 pb-1 mb-1">
-                  <span class="text-tech-light/70 text-xs font-semibold">TIME_UTC+8</span>
-                  <span class="font-bold text-xl ${valueColor} text-glow">${point.time}</span>
+                  <span class="text-tech-light/70 text-[10px] font-semibold">TIME_UTC+8</span>
+                  <span class="font-bold text-lg ${valueColor} text-glow">${point.time}</span>
                </div>
                <div class="flex justify-between items-center">
-                  <span class="text-tech-light/70 text-xs font-semibold">SPEED</span>
-                  <span class="font-bold text-2xl ${valueColor} text-glow">${point.speed}</span>
+                  <span class="text-tech-light/70 text-[10px] font-semibold">SPEED</span>
+                  <span class="font-bold text-xl ${valueColor} text-glow">${point.speed}</span>
                </div>
             </div>
 
-            <div class="col-span-2 ${envBorder} p-2.5 rounded border transition-colors duration-500 shadow-inner">
-              <span class="block text-tech-light/60 mb-1 text-xs font-bold uppercase tracking-wider">Environment Analysis</span>
-              <span class="${valueColor} text-sm font-medium leading-relaxed block text-justify">
+            <div class="col-span-2 ${envBorder} p-2 rounded border transition-colors duration-500 shadow-inner">
+              <span class="block text-tech-light/60 mb-0.5 text-[10px] font-bold uppercase tracking-wider">Environment Analysis</span>
+              <span class="${valueColor} text-xs font-medium leading-relaxed block text-justify">
                 ${point.environment}
               </span>
             </div>

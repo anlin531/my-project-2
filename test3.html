@@ -28,18 +28,19 @@
   </script>
   <style type="text/tailwindcss">
     @layer utilities {
+      /* 锐化发光效果，减少模糊感 */
       .text-glow {
-        text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+        text-shadow: 0 0 5px rgba(34, 211, 238, 0.8);
       }
       .text-glow-alert {
-        text-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
+        text-shadow: 0 0 5px rgba(255, 77, 77, 0.8);
       }
       .bg-weak {
         opacity: 0.2;
       }
       .card-border {
         border: 1px solid rgba(34, 211, 238, 0.4);
-        box-shadow: 0 0 15px rgba(34, 211, 238, 0.1) inset;
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.15) inset;
       }
     }
   </style>
@@ -50,15 +51,15 @@
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
 
-  <div class="fixed top-2 left-1/2 -translate-x-1/2 w-full max-w-[400px] z-50 p-2"> 
+  <div class="fixed top-1 left-1/2 -translate-x-1/2 w-full max-w-[400px] z-50"> 
     
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-tech-blue/20 to-transparent -z-10"></div>
 
     <div class="bg-tech-dark rounded-xl p-3 card-border backdrop-blur-md shadow-2xl"> 
       
-      <div class="flex flex-col items-center mb-2 pb-1.5 border-b border-tech-blue/30 relative"> 
-        <div class="absolute -left-1 top-0.5 w-1 h-3 bg-tech-blue"></div>
-        <div class="absolute -right-1 top-0.5 w-1 h-3 bg-tech-blue"></div>
+      <div class="flex flex-col items-center mb-1 pb-1.5 border-b border-tech-blue/30 relative"> 
+        <div class="absolute -left-1 top-1 w-1 h-3 bg-tech-blue"></div>
+        <div class="absolute -right-1 top-1 w-1 h-3 bg-tech-blue"></div>
         
         <h1 class="text-xl font-bold text-tech-blue text-glow tracking-widest">北极航道实时监测</h1>
         
@@ -67,12 +68,12 @@
            <p class="text-[10px] font-bold text-tech-light/90 tracking-wider">LIVE DATA STREAM</p>
         </div>
         
-        <button id="resetBtn" class="mt-1.5 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-bold py-0.5 px-2 rounded text-[10px] hover:bg-tech-blue hover:text-tech-dark transition-all duration-300">
+        <button id="resetBtn" class="mt-1 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-bold py-0.5 px-2 rounded text-[10px] hover:bg-tech-blue hover:text-tech-dark transition-all duration-300">
           <i class="fa fa-refresh mr-1"></i>REPLAY
         </button>
       </div>
 
-      <div id="waypoint-info" class="space-y-2 text-sm min-h-[200px]"> 
+      <div id="waypoint-info" class="space-y-2 text-sm min-h-[190px]"> 
         </div>
     </div>
   </div>
@@ -180,20 +181,9 @@
       }
     ];
 
-    // --- 严格基于秒表记录的毫秒级间隔 ---
-    // 0 -> 5.05 -> 10.51 -> 17.27 -> 34.70 -> 41.42 -> 47.55 -> 51.81 -> 55.67 -> 59.52 -> 1.04.57
+    // 严格的时间间隔逻辑 (保持不变，因为这是正确的)
     const intervals = [
-      5050,  // 太仓 (0.00 -> 5.05)
-      5460,  // 日本海 (5.05 -> 10.51)
-      6760,  // 宗谷 (10.51 -> 17.27)
-      17430, // 太平洋 (17.27 -> 34.70)
-      6720,  // 白令 (34.70 -> 41.42)
-      6130,  // 楚科奇 (41.42 -> 47.55)
-      4260,  // 东西伯利亚 (47.55 -> 51.81)
-      3860,  // 维利基斯基 (51.81 -> 55.67)
-      3850,  // 喀拉海 (55.67 -> 59.52)
-      5050,  // 巴伦支海 (59.52 -> 1m04.57)
-      99999  // 终点
+      5050, 5460, 6760, 17430, 6720, 6130, 4260, 3860, 3850, 5050, 99999
     ];
 
     let currentIndex = 0;
@@ -266,4 +256,30 @@
         `;
         container.style.opacity = "1";
         container.style.transform = "translateY(0)";
-        container.style.transition = "all 0.4s cubic-bezier
+        container.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+      }, 200);
+    }
+
+    function switchWaypoint() {
+      renderWaypoint(currentIndex);
+      if (currentIndex < waypoints.length - 1) {
+        timer = setTimeout(() => {
+            currentIndex++;
+            switchWaypoint();
+        }, intervals[currentIndex]);
+      }
+    }
+
+    function resetDisplay() {
+      clearTimeout(timer);
+      currentIndex = 0;
+      switchWaypoint();
+    }
+
+    window.onload = () => {
+      switchWaypoint();
+      document.getElementById('resetBtn').addEventListener('click', resetDisplay);
+    };
+  </script>
+</body>
+</html>

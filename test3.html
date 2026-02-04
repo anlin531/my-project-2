@@ -180,8 +180,20 @@
       }
     ];
 
+    // --- 严格基于秒表记录的毫秒级间隔 ---
+    // 0 -> 5.05 -> 10.51 -> 17.27 -> 34.70 -> 41.42 -> 47.55 -> 51.81 -> 55.67 -> 59.52 -> 1.04.57
     const intervals = [
-      6950, 5960, 7350, 17930, 6720, 6130, 4260, 3860, 3850, 5050, 99999
+      5050,  // 太仓 (0.00 -> 5.05)
+      5460,  // 日本海 (5.05 -> 10.51)
+      6760,  // 宗谷 (10.51 -> 17.27)
+      17430, // 太平洋 (17.27 -> 34.70)
+      6720,  // 白令 (34.70 -> 41.42)
+      6130,  // 楚科奇 (41.42 -> 47.55)
+      4260,  // 东西伯利亚 (47.55 -> 51.81)
+      3860,  // 维利基斯基 (51.81 -> 55.67)
+      3850,  // 喀拉海 (55.67 -> 59.52)
+      5050,  // 巴伦支海 (59.52 -> 1m04.57)
+      99999  // 终点
     ];
 
     let currentIndex = 0;
@@ -254,30 +266,4 @@
         `;
         container.style.opacity = "1";
         container.style.transform = "translateY(0)";
-        container.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
-      }, 200);
-    }
-
-    function switchWaypoint() {
-      renderWaypoint(currentIndex);
-      if (currentIndex < waypoints.length - 1) {
-        timer = setTimeout(() => {
-            currentIndex++;
-            switchWaypoint();
-        }, intervals[currentIndex]);
-      }
-    }
-
-    function resetDisplay() {
-      clearTimeout(timer);
-      currentIndex = 0;
-      switchWaypoint();
-    }
-
-    window.onload = () => {
-      switchWaypoint();
-      document.getElementById('resetBtn').addEventListener('click', resetDisplay);
-    };
-  </script>
-</body>
-</html>
+        container.style.transition = "all 0.4s cubic-bezier

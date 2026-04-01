@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script>
     tailwind.config = {
-      theme: { 
+      theme: {
         extend: {
           colors: {
             tech: {
@@ -189,18 +189,18 @@
 
     // 从太仓港开始计时的累计切换时间（毫秒）
     const switchTimes = [
-      9750,   // 日本海
-      16620,  // 宗谷海峡
-      26620,  // 西北太平洋（举例：更早进入）
-      62940,  // 白令海峡（这样西北太平洋能持续 36.32 秒）
-      72700,
-      78710,
-      83660,
-      91200,
-      97950,
-      98500
-];
-    let currentIndex = 0;
+      6430,   // 日本海
+      13520,  // 宗谷海峡
+      20100,  // 西北太平洋
+      42270,  // 白令海峡
+      49180,  // 楚科奇海
+      57750,  // 东西伯利亚海
+      63510,  // 维利基斯基海峡
+      68640,  // 喀拉海
+      74110,  // 巴伦支海
+      78600   // 挪威北角
+    ];
+
     let timers = [];
 
     function clearAllTimers() {
@@ -284,13 +284,12 @@
 
     function startPlayback() {
       clearAllTimers();
-      currentIndex = 0;
-      renderWaypoint(currentIndex);
+
+      renderWaypoint(0);
 
       switchTimes.forEach((time, i) => {
         const timer = setTimeout(() => {
-          currentIndex = i + 1;
-          renderWaypoint(currentIndex);
+          renderWaypoint(i + 1);
         }, time);
         timers.push(timer);
       });

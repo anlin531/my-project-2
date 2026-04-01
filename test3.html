@@ -13,10 +13,10 @@
           colors: {
             tech: {
               dark: 'rgba(15, 23, 42, 0.96)',
-              blue: '#22D3EE', 
-              light: '#E0F2FE', 
-              white: '#FFFFFF', // 纯白
-              alert: '#FF4D4D', 
+              blue: '#22D3EE',
+              light: '#E0F2FE',
+              white: '#FFFFFF',
+              alert: '#FF4D4D',
               warn: '#FBBF24',
             }
           },
@@ -32,6 +32,9 @@
     @layer utilities {
       .text-glow {
         text-shadow: 0 0 5px rgba(34, 211, 238, 0.8);
+      }
+      .text-glow-alert {
+        text-shadow: 0 0 6px rgba(255, 77, 77, 0.9);
       }
       .num-glow {
         text-shadow: 0 0 2px rgba(34, 211, 238, 0.5);
@@ -57,29 +60,27 @@
     <img src="https://github.com/anlin531/my-project-2/raw/main/111.jpg" alt="极地背景" class="w-full h-full object-cover">
   </div>
 
-  <div class="fixed top-1 left-1/2 -translate-x-1/2 w-full max-w-[400px] z-50"> 
+  <div class="fixed top-1 left-1/2 -translate-x-1/2 w-full max-w-[400px] z-50">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gradient-to-b from-transparent via-tech-blue/20 to-transparent -z-10"></div>
 
-    <div class="bg-tech-dark rounded-xl p-3 card-border backdrop-blur-md shadow-2xl"> 
-      
-      <div class="flex flex-col items-center mb-1 pb-1.5 border-b border-tech-blue/30 relative"> 
+    <div class="bg-tech-dark rounded-xl p-3 card-border backdrop-blur-md shadow-2xl">
+      <div class="flex flex-col items-center mb-1 pb-1.5 border-b border-tech-blue/30 relative">
         <div class="absolute -left-1 top-1 w-1 h-3 bg-tech-blue"></div>
         <div class="absolute -right-1 top-1 w-1 h-3 bg-tech-blue"></div>
-        
+
         <h1 class="text-xl font-bold text-tech-blue text-glow tracking-widest sharp-text">北极航道实时监测</h1>
-        
+
         <div class="flex items-center gap-2 mt-1">
-           <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_6px_#4ade80]"></span>
-           <p class="text-[10px] font-bold text-tech-light/90 tracking-wider sharp-text">LIVE DATA STREAM</p>
+          <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_6px_#4ade80]"></span>
+          <p class="text-[10px] font-bold text-tech-light/90 tracking-wider sharp-text">LIVE DATA STREAM</p>
         </div>
-        
+
         <button id="resetBtn" class="mt-1 bg-tech-blue/10 border border-tech-blue/50 text-tech-light font-bold py-0.5 px-2 rounded text-[10px] hover:bg-tech-blue hover:text-tech-dark transition-all duration-300 sharp-text">
           <i class="fa fa-refresh mr-1"></i>REPLAY
         </button>
       </div>
 
-      <div id="waypoint-info" class="space-y-2 text-sm min-h-[190px]"> 
-      </div>
+      <div id="waypoint-info" class="space-y-2 text-sm min-h-[190px]"></div>
     </div>
   </div>
 
@@ -101,7 +102,7 @@
         time: "En Route...",
         speed: "15.5节",
         environment: "受对马暖流影响，水温24℃。浪高1.5米，涌浪较小，适合全速航行。",
-        type: "transit" 
+        type: "transit"
       },
       {
         name: "宗谷海峡",
@@ -186,32 +187,49 @@
       }
     ];
 
+    // 这是“从太仓港开始计时”的累计切换时间（毫秒）
+    // 到这些时间点时，切换为对应地点信息
+    // 09.75 -> 日本海
+    // 16.62 -> 宗谷海峡
+    // 52.94 -> 西北太平洋
+    // 63.01 -> 白令海峡
+    // 72.70 -> 楚科奇海
+    // 78.71 -> 东西伯利亚海
+    // 83.66 -> 维利基斯基海峡
+    // 91.20 -> 喀拉海
+    // 97.95 -> 巴伦支海
     const switchTimes = [
-  9750,  // 日本海
-  16620, // 宗谷海峡
-  52940, // 西北太平洋
-  63010, // 白令海峡
-  72700, // 楚科奇海
-  78710, // 东西伯利亚海
-  83660, // 维利基斯基海峡
-  91200, // 喀拉海
-  97950  // 巴伦支海
-];
+      9750,
+      16620,
+      52940,
+      63010,
+      72700,
+      78710,
+      83660,
+      91200,
+      97950，
+      98500
+    ];
 
     let currentIndex = 0;
-    let timer = null;
+    let timers = [];
+
+    function clearAllTimers() {
+      timers.forEach(timer => clearTimeout(timer));
+      timers = [];
+    }
 
     function renderWaypoint(index) {
       const point = waypoints[index];
       const container = document.getElementById('waypoint-info');
-      
+
       let titleColor = 'text-tech-blue';
-      let valueColor = 'text-tech-white'; 
-      let envBorder = 'border-tech-blue/30 bg-black/20'; 
+      let valueColor = 'text-tech-white';
+      let envBorder = 'border-tech-blue/30 bg-black/20';
 
       if (point.type === 'danger') {
         titleColor = 'text-red-500 text-glow-alert';
-        valueColor = 'text-red-100'; 
+        valueColor = 'text-red-100';
         envBorder = 'border-red-500/50 bg-red-900/20';
       } else if (point.type === 'warn') {
         titleColor = 'text-yellow-400';
@@ -227,17 +245,19 @@
 
       container.style.opacity = "0";
       container.style.transform = "translateY(5px)";
-      
+
       setTimeout(() => {
         container.innerHTML = `
-          <div class="border-b border-tech-blue/30 pb-1.5 mb-2 flex justify-between items-end sharp-text"> 
+          <div class="border-b border-tech-blue/30 pb-1.5 mb-2 flex justify-between items-end sharp-text">
             <h2 class="text-lg font-bold ${titleColor} uppercase tracking-wide drop-shadow-md">
               ${point.name}
             </h2>
-            <span class="text-xs font-semibold text-tech-light/70 mb-0.5 tracking-wider font-mono">FRAME: 0${index + 1}</span>
+            <span class="text-xs font-semibold text-tech-light/70 mb-0.5 tracking-wider font-mono">
+              FRAME: ${String(index + 1).padStart(2, '0')}
+            </span>
           </div>
-          
-          <div class="grid grid-cols-2 gap-x-3 gap-y-2 font-mono sharp-text"> 
+
+          <div class="grid grid-cols-2 gap-x-3 gap-y-2 font-mono sharp-text">
             <div class="flex flex-col">
               <span class="text-tech-light/60 text-[10px] font-bold mb-0.5">LONGITUDE</span>
               <span class="font-bold text-tech-blue text-base tracking-wide">${point.lng}</span>
@@ -246,16 +266,16 @@
               <span class="text-tech-light/60 text-[10px] font-bold mb-0.5">LATITUDE</span>
               <span class="font-bold text-tech-blue text-base tracking-wide">${point.lon}</span>
             </div>
-            
+
             <div class="flex flex-col col-span-2 bg-black/40 p-2 rounded border border-white/10">
-               <div class="flex justify-between items-center border-b border-white/10 pb-1 mb-1">
-                  <span class="text-tech-light/60 text-[10px] font-bold">TIME_UTC+8</span>
-                  <span class="font-bold text-lg ${valueColor} num-glow tracking-wide">${point.time}</span>
-               </div>
-               <div class="flex justify-between items-center">
-                  <span class="text-tech-light/60 text-[10px] font-bold">SPEED</span>
-                  <span class="font-bold text-xl ${valueColor} num-glow tracking-wide">${point.speed}</span>
-               </div>
+              <div class="flex justify-between items-center border-b border-white/10 pb-1 mb-1">
+                <span class="text-tech-light/60 text-[10px] font-bold">TIME_UTC+8</span>
+                <span class="font-bold text-lg ${valueColor} num-glow tracking-wide">${point.time}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-tech-light/60 text-[10px] font-bold">SPEED</span>
+                <span class="font-bold text-xl ${valueColor} num-glow tracking-wide">${point.speed}</span>
+              </div>
             </div>
 
             <div class="col-span-2 ${envBorder} p-2 rounded border transition-colors duration-500 shadow-inner">
@@ -266,30 +286,36 @@
             </div>
           </div>
         `;
+
         container.style.opacity = "1";
         container.style.transform = "translateY(0)";
         container.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
       }, 200);
     }
 
-    function switchWaypoint() {
+    function startPlayback() {
+      clearAllTimers();
+
+      // 初始先显示太仓港
+      currentIndex = 0;
       renderWaypoint(currentIndex);
-      if (currentIndex < waypoints.length - 1) {
-        timer = setTimeout(() => {
-            currentIndex++;
-            switchWaypoint();
-        }, intervals[currentIndex]);
-      }
+
+      // 按累计时间切换到后续站点
+      switchTimes.forEach((time, i) => {
+        const timer = setTimeout(() => {
+          currentIndex = i + 1; // waypoints[1]开始对应日本海
+          renderWaypoint(currentIndex);
+        }, time);
+        timers.push(timer);
+      });
     }
 
     function resetDisplay() {
-      clearTimeout(timer);
-      currentIndex = 0;
-      switchWaypoint();
+      startPlayback();
     }
 
     window.onload = () => {
-      switchWaypoint();
+      startPlayback();
       document.getElementById('resetBtn').addEventListener('click', resetDisplay);
     };
   </script>
